@@ -20,6 +20,15 @@
     <script src="{{asset('backend')}}/js/map.shiftworker.js"></script>
     <script src="{{asset('backend')}}/js/ResizeSensor.js"></script>
     <script src="{{asset('backend')}}/js/dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
+    {{-- For showing toastr message --}}
+    <script>
+      @if(Session::has('message'))
+
+        toastr.success("{{ Session::get('message') }}");
+
+      @endif
+    </script>   
     <script>
       $(function(){
         'use strict'

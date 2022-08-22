@@ -14,7 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('branches', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
+            $table->string('name');
+            $table->string('manager');
+            $table->string('phone');
+            $table->string('email');
+            $table->integer('status');
             $table->timestamps();
         });
     }
