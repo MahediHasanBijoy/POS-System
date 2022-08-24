@@ -29,6 +29,7 @@
 
       @endif
     </script>   
+    <script src="{{asset('backend')}}/js/app.js"></script>
     <script>
       $(function(){
         'use strict'
