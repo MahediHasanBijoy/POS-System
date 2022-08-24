@@ -26,9 +26,9 @@ $(document).ready(function(){
 								<td>${val.product_code}</td>
 								<td>${val.cost_price}</td>
 								<td>${val.sale_price}</td>
-								<td>
-									<button class="btn-edit btn btn-info btn-sm">Edit</button>
-									<button class="btn-delete btn btn-danger btn-sm">Delete</button>
+								<td class="p-0 pt-2">
+									<button class="btn-edit btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
+									<button class="btn-delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
 								</td>
 							</tr>
 						`;

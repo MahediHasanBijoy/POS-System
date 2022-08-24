@@ -40,7 +40,7 @@
 			</div>
 		</div>
 		<div class="col-md-8">
-			<table class="table">
+			<table class="table-sm table-striped">
 				<thead>
 					<tr>
 						<th>Sl#</th>
