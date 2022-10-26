@@ -31,6 +31,17 @@
             <li class="sub-item"><a href="{{route('product.manage')}}" class="sub-link">Manage Product</a></li>
           </ul>
         </li>
+
+        <li class="br-menu-item">
+          <a href="#" class="br-menu-link with-sub">
+            <i class="menu-item-icon icon ion-ios-photos-outline tx-20"></i>
+            <span class="menu-item-label">Purchase</span>
+          </a><!-- br-menu-link -->
+          <ul class="br-menu-sub">
+            <li class="sub-item"><a href="{{route('purchase.manage')}}" class="sub-link">Add Purchase</a></li>
+            <li class="sub-item"><a href="{{route('product.manage')}}" class="sub-link">Manage Purchase</a></li>
+          </ul>
+        </li>
       </ul><!-- br-sideleft-menu -->
 
       

@@ -113,7 +113,12 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product = Product::where('id', $id)->get();
+
+        return response()->json([
+            'msg'=>'success',
+            'data'=>$product
+        ]);
     }
 
     /**
@@ -125,7 +130,21 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+
+        $product->name = $request->name;
+        $product->des = $request->des;
+        $product->size = $request->size;
+        $product->color = $request->color;
+        $product->product_code = $request->product_code;
+        $product->cost_price = $request->cost_price;
+        $product->sale_price = $request->sale_price;
+
+        $product->save();
+
+        return response()->json([
+            'msg'=>'updated successful'
+        ]);
     }
 
     /**
@@ -136,6 +155,10 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::find($id)->delete();
+
+        return response()->json([
+            'msg'=>'deleted'
+        ]);
     }
 }

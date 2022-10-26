@@ -4,6 +4,7 @@
 
 @section('content')
 
+
 	{{-- custom content will go here --}}
 
 			<table class="table bg-white rounded">
@@ -23,6 +24,7 @@
 						$sl = 1;
 					@endphp
 					@foreach($branches as $branch)
+
 					<tr>
 						<td>{{$sl}}</td>
 						<td>{{$branch->name}}</td>

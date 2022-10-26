@@ -18,15 +18,15 @@ class BranchController extends Controller
     }
 
     /**
-         * Display a add branch page.
-         *
-         * @return \Illuminate\Http\Response
-         */
-        public function manage(){
-            $branches = Branch::all();
-
-            return view('backend.pages.branch.manage', compact('branches'));
-        }
+     * Display a add branch page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function manage(){
+        $branches = Branch::all();
+        
+        return view('backend.pages.branch.manage', compact('branches'));
+    }
 
     /**
      * Display a listing of the resource.

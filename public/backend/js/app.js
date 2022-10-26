@@ -1,7 +1,9 @@
 $(document).ready(function(){
+
+/*-----------Product Section----------*/
+
 	// Show products
 	show();
-
 
 	// Function show 
 	function show(){
@@ -26,17 +28,17 @@ $(document).ready(function(){
 								<td>${val.product_code}</td>
 								<td>${val.cost_price}</td>
 								<td>${val.sale_price}</td>
-								<td class="p-0 pt-2">
-									<button class="btn-edit btn btn-info btn-sm"><i class="fas fa-edit"></i></button>
-									<button class="btn-delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+								<td class="p-2">
+									<button id="edit_button" class="btn-edit btn btn-info btn-sm" value="${val.id}" data-toggle="modal" data-target="#editModal"><i class="fas fa-edit"></i></button>
+									<button class="btn-delete btn btn-danger btn-sm" value="${val.id}"><i class="fas fa-trash"></i></button>
 								</td>
 							</tr>
 						`;
 
 						sl++;
 					});
-					console.log(output);
-					$("tbody").html(output);
+					
+					$(".products").html(output);
 				}
 			}
 		});
@@ -118,4 +120,165 @@ $(document).ready(function(){
 			}
 		})
 	});
+
+
+
+	// Edit product
+	$(document).on("click", "#edit_button",function(){
+		let id = $(this).val();
+
+		// Sending http request to controllers edit method
+		$.ajax({
+			url: '/product/edit/'+id,
+			type: 'get',
+			success: function(response){
+
+				$("#edit_name").val(response.data[0].name);
+				$("#edit_des").val(response.data[0].des);
+				$("#edit_size").val(response.data[0].size);
+				$("#edit_color").val(response.data[0].color);
+				$("#edit_product_code").val(response.data[0].product_code);
+				$("#edit_cost_price").val(response.data[0].cost_price);
+				$("#edit_sale_price").val(response.data[0].sale_price);
+
+				// setting value for modal update button
+				$("#update_modal").val(id);
+			}
+		})
+	});
+
+
+	// Update Product
+	$("#update_modal").click(function(){
+		// product id
+		let id = $("#update_modal").val();
+		// values from update modal
+		let name = $("#edit_name").val();
+		let des = $("#edit_des").val();
+		let size = $("#edit_size").val();
+		let color = $("#edit_color").val();
+		let product_code = $("#edit_product_code").val();
+		let cost_price = $("#edit_cost_price").val();
+		let sale_price = $("#edit_sale_price").val();
+
+		$.ajaxSetup({
+		    headers: {
+		        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		    }
+		});
+
+		$.ajax({
+			url: '/product/update/'+id,
+			type: 'post',
+			data: {
+				name,
+				des,
+				size,
+				color,
+				product_code,
+				cost_price,
+				sale_price
+			},
+			success:function(response){
+				$(".modal").modal("hide");
+
+				show();
+			}
+		})
+	});
+
+
+	// Delete Product
+	$(document).on("click", ".btn-delete", function(){
+		let id = $(this).val();
+
+		$.ajax({
+			url: '/product/destroy/'+id,
+			type: 'get',
+			success:function(response){
+				show();
+			}
+		});
+	})
+/*-------------End Product Section------------*/
+
+
+/*-------------Purchase Section Starts------------*/
+	
+	// Finding cost price when entering product id
+	$(document).on("keyup", ".product_id", function(){
+		let product_id = $(this).val();
+
+		if(product_id){
+			// http request
+			$.ajax({
+				url:'/purchase/find/'+product_id,
+				type:'get',
+				success:function(response){
+					if(response.msg === 'success'){
+						$(".cost_price").val(response.product.cost_price);
+						let qty = $(".qty").val();
+						let dis = $('.dis').val();
+						let total_amount = response.product.cost_price * qty;
+						let dis_amount = (total_amount*dis)/100;
+						let g_total = total_amount - dis_amount;
+						$(".total_amount").val(total_amount);
+						$(".dis_amount").val(dis_amount);
+						$(".g_total").val(g_total);
+
+					}else{
+						$(".cost_price").val('');
+					}
+				}
+			});
+
+
+		}else{
+			$(".cost_price").val('');
+			$(".total_amount").val('');
+			$(".dis_amount").val('');
+			$(".g_total").val('');
+		}
+		
+	});
+
+
+	// Finding total price after adding quantity
+	$(document).on('keyup','.qty', function(){
+		let qty = $(this).val();
+		let cost_price = $('.cost_price').val();
+		let dis = $('.dis').val();
+		let dis_amount = $('.dis_amount').val();
+		let total_amount = cost_price * qty;
+
+
+		$(".total_amount").val(total_amount);
+
+		if(dis!=''){
+			$('.dis_amount').val((total_amount*dis)/100);
+		}else{
+			$('.dis_amount').val('');
+			$('.g_total').val(total_amount);			
+		}
+
+		if(dis_amount!=''){
+			$('.g_total').val(total_amount - dis_amount);
+		}else{
+			$('.g_total').val(total_amount);
+		}
+		
+	});
+
+	// Finding discount amount
+	$(document).on('keyup', '.dis', function(){
+		let dis = $(this).val();
+		let total_amount = $('.total_amount').val();
+		let dis_amount = (total_amount * dis)/100;
+		$('.dis_amount').val(dis_amount);
+		let g_total = total_amount - dis_amount;
+		$('.g_total').val(g_total);
+	})
+
+/*-------------Purchase Section Ends------------*/
+
 })
