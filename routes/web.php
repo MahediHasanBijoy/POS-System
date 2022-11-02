@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\BranchController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\PurchaseController;
+use App\Http\Controllers\Backend\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,19 @@ Route::group(['prefix' => '/purchase'], function() {
     Route::get('/destroy/{id}', [PurchaseController::class, 'destroy'])->name('purchase.destroy');
     Route::get('/edit/{id}', [PurchaseController::class, 'edit']);
     Route::post('/update/{id}', [PurchaseController::class, 'update']);
-    Route::get('/find/{id}', [PurchaseController::class, 'find']);
+    Route::get('/find/{id}/{br_id}', [PurchaseController::class, 'find']);
+    Route::get('/stock', [PurchaseController::class, 'stock'])->name('stock');
+});
 
+
+// Sale routes
+Route::group(['prefix' => '/sale'], function() {
+    Route::get('/add', [SaleController::class, 'index'])->name('add.sale');
+    Route::get('/find_price/{id}', [SaleController::class,'findPrice']);
+    Route::post('/store', [SaleController::class, 'store']);
+    Route::get('/productshow/{invoice}', [SaleController::class, 'productshow']);
+    Route::get('/destroy/{id}', [SaleController::class, 'destroy'])->name('sale.destroy');
+    Route::get('/edit/{id}', [SaleController::class, 'edit']);
+    Route::post('/update/{id}', [SaleController::class, 'update']);
+    Route::get('/find/{id}/{br_id}', [SaleController::class, 'find']);
 });

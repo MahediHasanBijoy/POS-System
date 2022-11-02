@@ -57,7 +57,7 @@
           </div><!-- col-3 -->
         </div><!-- row -->
 
-        <div class="row row-sm mg-t-20">
+       {{--  <div class="row row-sm mg-t-20">
           <div class="col-lg-8">
             <div class="card bd-0 shadow-base">
               <div class="d-md-flex justify-content-between pd-25">
@@ -348,6 +348,6 @@
             </div><!-- card -->
 
           </div><!-- col-4 -->
-        </div><!-- row --> 
+        </div><!-- row -->  --}}
 
 @endsection

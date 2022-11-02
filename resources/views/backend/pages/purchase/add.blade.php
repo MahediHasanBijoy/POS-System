@@ -8,8 +8,8 @@
 				<input type="date" class="form-control date">
 			</div>
 			<div class="form-group mt-3">
-				<select class="form-control">
-					<option value="">---Select Branch---</option>
+				<select name="branches" class="form-control branches">
+					<option value="0">---Select Branch---</option>
 					@foreach($branches as $branch)
 					<option value="{{$branch->id}}">{{$branch->name}}</option>
 					@endforeach
@@ -47,7 +47,7 @@
 			<div class="form-group mt-3">
 				<input readonly type="text" class="form-control g_total" placeholder="Grand Total">
 			</div>
-			<button class="form-control btn btn-success">Save</button>
+			<button id="purchase_btn" class="form-control btn btn-success">Save</button>
 		</div>
 	</div>
 

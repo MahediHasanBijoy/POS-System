@@ -208,11 +208,12 @@ $(document).ready(function(){
 	// Finding cost price when entering product id
 	$(document).on("keyup", ".product_id", function(){
 		let product_id = $(this).val();
-
+		let branch_id = $('select[name=branches] option').filter(':selected').val();
+		
 		if(product_id){
 			// http request
 			$.ajax({
-				url:'/purchase/find/'+product_id,
+				url:'/purchase/find/'+product_id+'/'+branch_id,
 				type:'get',
 				success:function(response){
 					if(response.msg === 'success'){
@@ -222,6 +223,9 @@ $(document).ready(function(){
 						let total_amount = response.product.cost_price * qty;
 						let dis_amount = (total_amount*dis)/100;
 						let g_total = total_amount - dis_amount;
+						if(response.available_stock){
+							$('.available_stock').val(response.available_stock);
+						}
 						$(".total_amount").val(total_amount);
 						$(".dis_amount").val(dis_amount);
 						$(".g_total").val(g_total);
@@ -277,8 +281,298 @@ $(document).ready(function(){
 		$('.dis_amount').val(dis_amount);
 		let g_total = total_amount - dis_amount;
 		$('.g_total').val(g_total);
-	})
+	});
+
+
+	// Store purchase data
+	$('#purchase_btn').click(function(){
+		let date = $('.date').val();
+		let br_id =  $('select[name=branches] option').filter(':selected').val();
+		let company_name = $('.company_name').val();
+		let invoice = $('.invoice').val();
+		let product_id = $('.product_id').val();
+		let dis = $('.dis').val();
+		let dis_amount = $('.dis_amount').val();
+		let total_amount = $('.g_total').val();
+		let qty = $('.qty').val();
+
+		//clearing previous error messages
+		$('.purchase_error').remove();
+		
+		// console.log({date,br_id,company_name,invoice,product_id,dis,dis_amount,total_amount});
+		$.ajaxSetup({
+		    headers: {
+		        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		    }
+		});
+
+
+		$.ajax({
+			url:'/purchase/store',
+			type:'post',
+			data:{
+				date,
+				br_id,
+				company_name,
+				invoice,
+				product_id,
+				dis,
+				dis_amount,
+				total_amount,
+				qty
+			},
+			success:function(response){
+					// showing validation errors
+					if(response.date){
+						$(`<span class="purchase_error text-danger pl-2">${response.date[0]}</span>`).insertAfter('.date');
+					}
+					if(response.br_id){
+						$(`<span class="purchase_error text-danger pl-2">${response.br_id[0]}</span>`).insertAfter('.branches');
+					}
+					if(response.company_name){
+						$(`<span class="purchase_error text-danger pl-2">${response.company_name[0]}</span>`).insertAfter('.company_name');
+					}
+					if(response.invoice){
+						$(`<span class="purchase_error text-danger pl-2">${response.invoice[0]}</span>`).insertAfter('.invoice');
+					}
+					if(response.product_id){
+						$(`<span class="purchase_error text-danger pl-2">${response.product_id[0]}</span>`).insertAfter('.product_id');
+					}
+					if(response.dis){
+						$(`<span class="purchase_error text-danger pl-2">${response.dis[0]}</span>`).insertAfter('.dis');
+					}
+
+					if(response == 'success'){
+						$('.date').val('');
+						$('select[name=branches]').val('0');
+						$('.company_name').val('');
+						$('.invoice').val('');
+						$('.available_stock').val('');
+						$('.cost_price').val('');
+						$('.product_id').val('');
+						$('.qty').val('');
+						$('.dis').val('');
+						$('.dis_amount').val('');
+						$('.g_total').val('');
+						$('.total_amount').val('');
+					}
+					
+			}
+		})
+
+	});
+
+
 
 /*-------------Purchase Section Ends------------*/
 
+
+/*-------------Sale Section Starts------------*/
+
+// Finding sale price
+$(document).on('keyup','.sproduct_id', function(){
+	let product_id = $(this).val();
+	let qty = $('.squantity').val();
+	let dis = $('.sdis').val();
+	if(product_id){
+
+		$.ajax({
+			url:'/sale/find_price/'+product_id,
+			method:'get',
+			success:function(response){
+				if(response.product !=null){
+					$(".sprice").val(response.product.sale_price);
+					if(qty!=''&& dis!=''){
+						let total_amount = response.product.sale_price * qty;
+						let dis_amount = (response.product.sale_price * qty * dis)/100;
+						$('.sdis_amount').val(dis_amount);
+						$('.stotal_amount').val(total_amount-dis_amount);
+					}
+					else if(qty!='' && dis ==''){
+						$('.stotal_amount').val(qty * response.product.sale_price);
+						$('.sdis_amount').val('');
+					}
+				}else{
+					$(".sprice").val('');
+				}
+			}
+		});
+	}else{
+		$(".sprice").val('');
+		$('.stotal_amount').val('');
+		$('.sdis_amount').val('');
+	}
+});
+
+// Finding Total price without discount
+$(document).on('keyup', '.squantity', function(){
+	let qty = $(this).val();
+	let price = $('.sprice').val();
+	let total_price = qty * price;
+	let dis = $('.sdis').val();
+	if(dis!='' && price!='' && qty!=''){
+		let dis_amount = (total_price * dis)/100;
+		$('.sdis_amount').val(dis_amount);
+		$('.stotal_amount').val(total_price - dis_amount);
+	}
+	else if(qty != '' && price != ''){
+		$('.stotal_amount').val(total_price);
+	}else{
+		$('.stotal_amount').val('');
+		$('.sdis_amount').val('');
+	}
+	
+});
+
+// Finding total price adding discount
+$(document).on('keyup', '.sdis', function(){
+	let dis = $(this).val();
+	let qty = $('.squantity').val();
+	let price = $('.sprice').val();
+	let total_price = qty * price;
+	let dis_amount = (total_price * dis)/100;
+	let grand_total = total_price - dis_amount;
+	if(price!='' && qty!=''){
+		$('.sdis_amount').val(dis_amount);
+		$('.stotal_amount').val(grand_total);
+	}else{
+		$('.sdis_amount').val('');
+		$('.stotal_amount').val('');
+	}
+	
+
+});
+
+// Store Sale data
+$('.sale_btn').click(function(){
+	let date = $(".sdate").val();
+	let br_id = $(".sbranch").val();
+	let product_id = $(".sproduct_id").val();
+	let invoice = $(".sinvoice").val();
+	let quantity = $(".squantity").val();
+	let dis = $(".sdis").val();
+	let dis_amount = $(".sdis_amount").val();
+	let total_amount = $(".stotal_amount").val();
+
+
+	//clearing previous error messages
+	$('.sale_error').remove();
+
+
+	$.ajaxSetup({
+		    headers: {
+		        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		    }
+		});
+
+	$.ajax({
+		url:'/sale/store',
+		method:'post',
+		data:{
+			date,
+			br_id,
+			product_id,
+			invoice,
+			quantity,
+			dis,
+			dis_amount,
+			total_amount
+		},
+		success:function(response){
+			// showing validation errors
+			if(response.date){
+				$(`<span class="sale_error text-danger pl-2">${response.date[0]}</span>`).insertAfter('.sdate');
+			}
+			if(response.br_id){
+				$(`<span class="sale_error text-danger pl-2">${response.br_id[0]}</span>`).insertAfter('.sbranch');
+			}
+			if(response.invoice){
+				$(`<span class="sale_error text-danger pl-2">${response.invoice[0]}</span>`).insertAfter('.sinvoice');
+			}
+			if(response.product_id){
+				$(`<span class="sale_error text-danger pl-2">${response.product_id[0]}</span>`).insertAfter('.sproduct_id');
+			}
+			if(response.dis){
+				$(`<span class="sale_error text-danger pl-2">${response.dis[0]}</span>`).insertAfter('.sdis');
+			}
+			if(response.quantity){
+				$(`<span class="sale_error text-danger pl-2">${response.quantity[0]}</span>`).insertAfter('.squantity');
+			}
+			
+			// When no error found
+			if(response.msg == 'success'){
+				$('.sdate').val('');
+				$('.sbranch').val('');
+				$('.sproduct_id').val('');
+				$('.squantity').val('');
+				$('.sdis').val('');
+				$('.sdis_amount').val('');
+				$('.stotal_amount').val('');
+				$('.sprice').val('');
+			}
+
+			if(response.msg == 'error1'){
+				$(`<span class="sale_error text-danger pl-2">Stock has less quantity available!</span>`).insertAfter('.squantity');
+			}else if(response.msg == 'error2'){
+				$(`<span class="sale_error text-danger pl-2">Stock is not available currently!</span>`).insertAfter('.squantity');
+			}
+
+			productShow(invoice);
+		}
+	});
+});
+
+
+// Show sale list
+function productShow(invoice){
+	$.ajax({
+		url:'/sale/productshow/'+invoice,
+		method:'get',
+		dataType:'json',
+		success:function(response){
+			let output = '';
+			let sl = 1;
+			$.each(response.sales, function(key,val){
+				
+				output += `<tr>
+								<td>${sl++}</td>
+								<td>${val.product.name}</td>
+								<td>${val.quantity}</td>
+								<td>${val.product.sale_price}</td>
+								<td>${val.total_amount}</td>
+								<td><button value="${val.id}" class="sale_del btn btn-danger btn-sm">Delete</button></td>
+							</tr>`;
+			});
+			$(".saleproduct").html(output);
+		}
+	});
+}
+
+// Delete product from sale list
+$(document).on('click','.sale_del',function(){
+
+	let sale_id = $(this).val();
+	let invoice = $('.sinvoice').val();
+
+	$.ajax({
+		url:'/sale/destroy/'+sale_id,
+		method:'get',
+		success:function(response){
+			
+			if(response == 'success'){
+				productShow(invoice);
+			}
+			
+		}
+	});
+})
+
+
+	
+
+
+
+
+
+/*-------------Sale Section Ends------------*/
 })

@@ -16,4 +16,7 @@ class Branch extends Model
         'email',
         'status'
     ];
+
+
+    
 }
