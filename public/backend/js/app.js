@@ -565,6 +565,16 @@ $(document).on('click','.sale_del',function(){
 			
 		}
 	});
+});
+
+
+// Print sale report
+$('.print').click(function(){
+
+	let invoice = $('.sinvoice').val();
+
+	window.open('http://127.0.0.1:8000/sale/print/'+invoice);
+
 })
 
 

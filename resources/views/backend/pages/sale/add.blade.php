@@ -27,7 +27,7 @@
 		</div>
 		<div class="col-md-3">
 			<div class="form-group">
-				<input readonly value="1000001" type="text" class="sinvoice form-control" placeholder="Invoice Number">
+				<input readonly value="{{$invoice}}" type="text" class="sinvoice form-control" placeholder="Invoice Number">
 			</div>
 			<div class="form-group">
 				<input readonly type="text" class="sprice form-control" placeholder="Price">
@@ -76,7 +76,13 @@
 				</tbody>
 			</table>
 		</div>
+
+		<div class="col-md-3 mt-5">
+			<button class="print btn btn-info btn-sm">Print <i class="fas fa-print"></i></button>
+		</div>
 	</div>
+
+
 
 
 @endsection

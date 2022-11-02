@@ -14,9 +14,23 @@ use Validator;
 class SaleController extends Controller
 {
     public function index(){
+        // All branches
         $branches = Branch::all();
 
-        return view('backend.pages.sale.add',compact('branches'));
+        // Generate Invoice number
+        $invoice = '1000000';
+        $sale = new Sale();
+
+        $last_row = $sale->orderBy('id', 'DESC')->first();
+
+
+        if($last_row != null){  
+            $invoice = $last_row->invoice + 1;
+        }
+        
+        return view('backend.pages.sale.add',compact('branches', 'invoice'));
+
+        
     }
 
 
@@ -114,5 +128,13 @@ class SaleController extends Controller
         $sale->delete();
 
         return response('success');
+    }
+
+    // print function
+    public function print($invoice){
+
+        $sales = Sale::where('invoice', $invoice)->get();
+
+        return view('backend.pages.sale.print', compact('sales'));
     }
 }

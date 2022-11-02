@@ -70,7 +70,5 @@ Route::group(['prefix' => '/sale'], function() {
     Route::post('/store', [SaleController::class, 'store']);
     Route::get('/productshow/{invoice}', [SaleController::class, 'productshow']);
     Route::get('/destroy/{id}', [SaleController::class, 'destroy'])->name('sale.destroy');
-    Route::get('/edit/{id}', [SaleController::class, 'edit']);
-    Route::post('/update/{id}', [SaleController::class, 'update']);
-    Route::get('/find/{id}/{br_id}', [SaleController::class, 'find']);
+    Route::get('/print/{invoice}', [SaleController::class, 'print']);
 });
